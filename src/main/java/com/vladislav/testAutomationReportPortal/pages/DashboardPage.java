@@ -99,7 +99,7 @@ public class DashboardPage {
         }
     }
 
-    private void verifyWidgetCreation(String widgetName) {
+   public void verifyWidgetCreation(String widgetName) {
         logger.info("Verifying widget creation for: {}", widgetName);
         By widgetLocator = By.xpath(String.format("//*[contains(text(), '%s')]", widgetName));
 
