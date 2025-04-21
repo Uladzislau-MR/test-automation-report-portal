@@ -18,6 +18,7 @@ public class ApiData {
     }
 
     public static class Project {
+        public static final String DASHBOARD_PROJECT_NAME = "/default_personal";
         public static final String PROJECT_NAME = "/#default_personal";
     }
 

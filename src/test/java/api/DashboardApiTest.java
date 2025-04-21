@@ -29,7 +29,7 @@ public class DashboardApiTest {
         Dashboard testDashboard = RestAssuredHelper.generateTestDashboard();
 
         Response response = new RestAssuredHelper()
-                .withBasePath(ApiData.Project.PROJECT_NAME + ApiData.Endpoints.DASHBOARD)
+                .withBasePath(ApiData.Project.DASHBOARD_PROJECT_NAME + ApiData.Endpoints.DASHBOARD)
                 .withBody(testDashboard)
                 .executeAndValidate(POST, 201);
 
@@ -49,7 +49,7 @@ public class DashboardApiTest {
 
     private List<Integer> getDashboardIds() {
         return new RestAssuredHelper()
-                .withBasePath(ApiData.Project.PROJECT_NAME + ApiData.Endpoints.DASHBOARD)
+                .withBasePath(ApiData.Project.DASHBOARD_PROJECT_NAME + ApiData.Endpoints.DASHBOARD)
                 .withQueryParam("page.size", 100)
                 .executeAndValidate(GET, 200)
                 .jsonPath()
@@ -71,7 +71,7 @@ public class DashboardApiTest {
 
 
         Response response = new RestAssuredHelper()
-                .withBasePath(ApiData.Project.PROJECT_NAME + ApiData.Endpoints.DASHBOARD)
+                .withBasePath(ApiData.Project.DASHBOARD_PROJECT_NAME + ApiData.Endpoints.DASHBOARD)
                 .withBody(invalidDashboard)
                 .executeAndValidate(POST, 400);
 
