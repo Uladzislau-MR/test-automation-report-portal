@@ -1,7 +1,5 @@
 package com.vladislav.testAutomationReportPortal.utils;
 
-import org.openqa.selenium.remote.Response;
-
 public class ApiData {
     public static class Endpoints {
         public static final String URL = "https://demo.reportportal.io/api/v1";

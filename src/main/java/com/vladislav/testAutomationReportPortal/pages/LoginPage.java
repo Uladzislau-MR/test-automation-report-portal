@@ -14,8 +14,8 @@ import java.time.Duration;
 
 public class LoginPage {
 
-    private WebDriver driver;
-    private WebDriverWait wait;
+    private final WebDriver driver;
+    private final WebDriverWait wait;
 
 
     private By loginInput = By.name("login");

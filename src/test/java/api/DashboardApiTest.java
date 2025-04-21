@@ -1,14 +1,12 @@
 package api;
 
-import api.Dashboard;
+
 import com.vladislav.testAutomationReportPortal.utils.ApiData;
 import helpers.RestAssuredHelper;
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import java.util.List;
 
 
