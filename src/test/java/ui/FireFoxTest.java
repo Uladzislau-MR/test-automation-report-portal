@@ -2,6 +2,7 @@ package ui;
 
 import com.vladislav.testAutomationReportPortal.pages.DashboardPage;
 import com.vladislav.testAutomationReportPortal.pages.LoginPage;
+import com.vladislav.testAutomationReportPortal.utils.ApiData;
 import com.vladislav.testAutomationReportPortal.utils.DriverFactory;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
@@ -28,7 +29,7 @@ class FireFoxTest {
     void testFirefoxWorkflow() {
         logger.info("Starting Firefox browser workflow test");
 
-        loginPage.loginAs("default", "1q2w3e");
+        loginPage.loginAs(ApiData.Auth.USERNAME, ApiData.Auth.PASSWORD);
         logger.debug("Completed login");
 
         dashboardPage.openDashboard();
