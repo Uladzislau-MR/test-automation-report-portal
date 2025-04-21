@@ -1,145 +1,88 @@
 package api;
 
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
+import api.Dashboard;
+import helpers.RestAssuredHelper;
+import io.qameta.allure.*;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Random;
-
-import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.*;
 
 
+import static helpers.RestAssuredHelper.RequestType.GET;
+import static helpers.RestAssuredHelper.RequestType.POST;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Epic("Dashboard Management")
+@Feature("Dashboard API Operations")
 public class DashboardApiTest {
-
-    private static final Logger logger = LoggerFactory.getLogger(DashboardApiTest.class);
-    private static final String URL = "https://demo.reportportal.io/api/v1";
-    private static final String TOKEN = "123_dfqf6R-AQxmO3nfAG-7mmUdsWz2l19-3vNZBTP33It4MElxmGkDH1eNz8whrIbQh";
-
+    @Epic("Dashboard Management")
+    @Feature("Dashboard API Operations")
     @BeforeAll
-    public static void setup() {
-        RestAssured.baseURI = URL;
+    @Step("Initialize API settings")
+    static void setup() {
+        new RestAssuredHelper();
     }
 
     @Test
-    public void createDashboardPositiveTest() {
-        logger.info("\n=== Test 2: Creating a new Dashboard ===");
-
-        String projectName = "default_personal";
-        Random random = new Random();
-        int randomSuffix = random.nextInt(20, 1000);
-        String dashboardName = "testBoard" + randomSuffix;
-
-        logger.debug("Generating test dashboard data:\nName: {}\nDescription: tv", dashboardName);
-
-        Dashboard dashboard = new Dashboard(dashboardName, "test");
-
-        logger.info("Sending POST request to create dashboard");
-        Response response = given()
-                .basePath("/" + projectName + "/dashboard")
-                .header("Authorization", "Bearer " + TOKEN)
-                .accept(ContentType.JSON)
-                .contentType(ContentType.JSON)
-                .body(dashboard)
-                .when()
-                .post()
-                .then()
-                .statusCode(201)
-                .log().ifError() // Логировать только при ошибках
-                .extract()
-                .response();
-
-        Integer createdDashboardId = response.path("id");
-        logger.info("Successfully created dashboard. ID: {}", createdDashboardId);
-
-        logger.debug("Retrieving dashboard list with parameters:\nPage size: 100\nSort order: ID descending");
-        Response listResponse = given()
-                .basePath("/" + projectName + "/dashboard")
-                .header("Authorization", "Bearer " + TOKEN)
-                .queryParam("page.size", 100)
-                .queryParam("sort", "id,desc")
-                .accept(ContentType.JSON)
-                .when()
-                .get()
-                .then()
-                .statusCode(200)
-                .log().ifValidationFails()
-                .extract()
-                .response();
-
-        List<Integer> dashboardIds = listResponse.jsonPath().getList("content.id", Integer.class);
-
-        logger.debug("Verification details:\nExpected ID: {}\nTotal dashboards: {}",
-                createdDashboardId, dashboardIds.size());
-
-        assertTrue(dashboardIds.contains(createdDashboardId),
-                "Dashboard ID " + createdDashboardId + " not found in list");
-
-        logger.info("Test passed - Dashboard created and verified");
+    @DisplayName("Positive: Create new dashboard")
+    @Step("Initial5555ize API settings")
+    @Story("User creates valid dashboard")
+    @Severity(SeverityLevel.CRITICAL)
+    void createDashboardPositiveTest() {
+        Response response = executeCreateRequest();
+        Integer createdId = extractDashboardId(response);
+        verifyDashboardInList(createdId);
     }
 
-
     @Test
-    public void createDashboardNegativeTest() {
-        Logger logger = LoggerFactory.getLogger(DashboardApiTest.class);
+    @DisplayName("Negative: Create dashboard without required fields")
+    @Story("Validation of mandatory fields")
+    @Severity(SeverityLevel.NORMAL)
+    void createDashboardNegativeTest() {
+        Response response = new RestAssuredHelper()
+                .withBasePath("/default_personal/dashboard")
+                .withBody(new Dashboard())
+                .executeAndValidate(POST, 400);
 
-        logger.info("\n=== Test 3: Create Dashboard with Insufficient Parameters ===");
-        String projectName = "default_personal";
+        validateErrorMessage(response);
+    }
 
-        logger.info("Creating empty dashboard payload");
-        Dashboard dashboard = new Dashboard();
-        logger.debug("Payload: {}", dashboard);
+    @Step("Execute dashboard creation request")
+    private Response executeCreateRequest() {
+        return new RestAssuredHelper()
+                .withBasePath("/default_personal/dashboard")
+                .withBody(RestAssuredHelper.generateTestDashboard())
+                .executeAndValidate(POST, 201);
+    }
 
-        logger.info("Sending POST with missing required fields");
-        Response response = given()
-                .basePath("/" + projectName + "/dashboard")
-                .header("Authorization", "Bearer " + TOKEN)
-                .contentType(ContentType.JSON)
-                .body(dashboard)
-                .when()
-                .post()
-                .then()
-                .statusCode(400)
-                .log().ifError()
-                .extract()
-                .response();
+    @Step("Extract dashboard ID from response")
+    private Integer extractDashboardId(Response response) {
+        return response.path("id");
+    }
 
-        logger.info("Checking error response");
-        String errorMessage = response.jsonPath().getString("message");
-        logger.debug("Error message: {}", errorMessage);
-        assertNotNull(errorMessage, "Error message should be present");
-
-        logger.info("Ensuring no invalid dashboard created");
-        List<Integer> dashboardIds = given()
-                .basePath("/" + projectName + "/dashboard")
-                .header("Authorization", "Bearer " + TOKEN)
-                .queryParam("page.size", 100)
-                .get()
+    @Step("Verify dashboard exists in list")
+    private void verifyDashboardInList(Integer dashboardId) {
+        List<Integer> ids = new RestAssuredHelper()
+                .withBasePath("/default_personal/dashboard")
+                .withQueryParam("page.size", 100)
+                .withQueryParam("sort", "id,desc")
+                .executeAndValidate(GET, 200)
                 .jsonPath()
                 .getList("content.id", Integer.class);
 
-        logger.debug("Current dashboards count: {}", dashboardIds.size());
-
-        Integer invalidDashboardId = response.jsonPath().getObject("id", Integer.class);
-        if(invalidDashboardId != null) {
-            logger.warn("Unexpected ID in error response: {}", invalidDashboardId);
-            assertFalse(dashboardIds.contains(invalidDashboardId),
-                    "Invalid dashboard ID found in list");
-        }
-
-        logger.info("Negative test passed - validation works correctly");
+        assertTrue(ids.contains(dashboardId),
+                "Dashboard ID " + dashboardId + " not found");
     }
 
-
+    @Step("Validate error message in response")
+    private void validateErrorMessage(Response response) {
+        String error = response.path("message");
+        assertNotNull(error, "Error message missing");
+        assertTrue(error.contains("Field 'name'"),
+                "Incorrect validation message");
+    }
 }
-
-
-
-
-
-

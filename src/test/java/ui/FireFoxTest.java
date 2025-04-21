@@ -1,4 +1,4 @@
-package uI;
+package ui;
 
 import com.vladislav.testAutomationReportPortal.pages.DashboardPage;
 import com.vladislav.testAutomationReportPortal.pages.LoginPage;

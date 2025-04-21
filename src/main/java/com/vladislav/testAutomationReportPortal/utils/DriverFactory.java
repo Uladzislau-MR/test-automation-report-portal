@@ -19,7 +19,7 @@ public class DriverFactory {
     public static WebDriver createFirefoxDriver() {
 
         FirefoxOptions options = new FirefoxOptions();
-        options.setCapability("moz:webdriverClick", false); // иногда помогает
+        options.setCapability("moz:webdriverClick", false);
 
 
         FirefoxProfile profile = new FirefoxProfile();
