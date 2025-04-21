@@ -2,6 +2,7 @@ package ui;
 
 import com.vladislav.testAutomationReportPortal.pages.DashboardPage;
 import com.vladislav.testAutomationReportPortal.pages.LoginPage;
+import com.vladislav.testAutomationReportPortal.utils.ApiData;
 import com.vladislav.testAutomationReportPortal.utils.DriverFactory;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
@@ -26,7 +27,7 @@ class ChromeTest {
     @Test
     void testFullWorkflow() {
         logger.info("Starting full workflow test");
-        loginPage.loginAs("default", "1q2w3e");
+        loginPage.loginAs(ApiData.Auth.USERNAME, ApiData.Auth.PASSWORD);
         dashboardPage.openDashboard();
         dashboardPage.selectDashboard();
         dashboardPage.addNewWidget("testWidget");

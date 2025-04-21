@@ -2,6 +2,7 @@ package com.vladislav.testAutomationReportPortal.pages;
 
 
 
+import com.vladislav.testAutomationReportPortal.utils.ApiData;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -29,7 +30,7 @@ public class LoginPage {
 
 
     public void open() {
-        driver.get("https://demo.reportportal.io/ui/#login");
+        driver.get(ApiData.Endpoints.BASE_URL + ApiData.Endpoints.LOGIN);
        wait.until(
                 webDriver -> ((JavascriptExecutor) webDriver)
                         .executeScript("return document.readyState").equals("complete"));

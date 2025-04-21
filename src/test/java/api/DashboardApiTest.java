@@ -1,6 +1,7 @@
 package api;
 
 import api.Dashboard;
+import com.vladislav.testAutomationReportPortal.utils.ApiData;
 import helpers.RestAssuredHelper;
 import io.qameta.allure.*;
 import io.restassured.response.Response;
@@ -19,70 +20,71 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Epic("Dashboard Management")
 @Feature("Dashboard API Operations")
 public class DashboardApiTest {
-    @Epic("Dashboard Management")
-    @Feature("Dashboard API Operations")
-    @BeforeAll
-    @Step("Initialize API settings")
-    static void setup() {
-        new RestAssuredHelper();
-    }
-
     @Test
     @DisplayName("Positive: Create new dashboard")
-    @Step("Initial5555ize API settings")
     @Story("User creates valid dashboard")
     @Severity(SeverityLevel.CRITICAL)
     void createDashboardPositiveTest() {
-        Response response = executeCreateRequest();
-        Integer createdId = extractDashboardId(response);
-        verifyDashboardInList(createdId);
+
+        Dashboard testDashboard = RestAssuredHelper.generateTestDashboard();
+
+        Response response = new RestAssuredHelper()
+                .withBasePath(ApiData.Project.PROJECT_NAME + ApiData.Endpoints.DASHBOARD)
+                .withBody(testDashboard)
+                .executeAndValidate(POST, 201);
+
+        Integer createdId = response.path("id");
+
+
+        verifyDashboardWasCreated(createdId);
     }
+
+
+    private void verifyDashboardWasCreated(Integer dashboardId) {
+        List<Integer> ids = getDashboardIds();
+        assertTrue(ids.contains(dashboardId), "Dashboard not found after creation");
+    }
+
+
+
+    private List<Integer> getDashboardIds() {
+        return new RestAssuredHelper()
+                .withBasePath(ApiData.Project.PROJECT_NAME + ApiData.Endpoints.DASHBOARD)
+                .withQueryParam("page.size", 100)
+                .executeAndValidate(GET, 200)
+                .jsonPath()
+                .getList("content.id", Integer.class);
+    }
+
+
+
+
+
 
     @Test
     @DisplayName("Negative: Create dashboard without required fields")
     @Story("Validation of mandatory fields")
     @Severity(SeverityLevel.NORMAL)
     void createDashboardNegativeTest() {
+
+        Dashboard invalidDashboard = new Dashboard();
+
+
         Response response = new RestAssuredHelper()
-                .withBasePath("/default_personal/dashboard")
-                .withBody(new Dashboard())
+                .withBasePath(ApiData.Project.PROJECT_NAME + ApiData.Endpoints.DASHBOARD)
+                .withBody(invalidDashboard)
                 .executeAndValidate(POST, 400);
+
 
         validateErrorMessage(response);
     }
 
-    @Step("Execute dashboard creation request")
-    private Response executeCreateRequest() {
-        return new RestAssuredHelper()
-                .withBasePath("/default_personal/dashboard")
-                .withBody(RestAssuredHelper.generateTestDashboard())
-                .executeAndValidate(POST, 201);
-    }
-
-    @Step("Extract dashboard ID from response")
-    private Integer extractDashboardId(Response response) {
-        return response.path("id");
-    }
-
-    @Step("Verify dashboard exists in list")
-    private void verifyDashboardInList(Integer dashboardId) {
-        List<Integer> ids = new RestAssuredHelper()
-                .withBasePath("/default_personal/dashboard")
-                .withQueryParam("page.size", 100)
-                .withQueryParam("sort", "id,desc")
-                .executeAndValidate(GET, 200)
-                .jsonPath()
-                .getList("content.id", Integer.class);
-
-        assertTrue(ids.contains(dashboardId),
-                "Dashboard ID " + dashboardId + " not found");
-    }
-
     @Step("Validate error message in response")
     private void validateErrorMessage(Response response) {
-        String error = response.path("message");
-        assertNotNull(error, "Error message missing");
-        assertTrue(error.contains("Field 'name'"),
-                "Incorrect validation message");
+        String errorMessage = response.jsonPath().getString("message");
+        assertNotNull(errorMessage, "Error message is missing");
+        assertTrue(errorMessage.contains("Field 'name'"),
+                "Expected a validation error for the 'name' field, but got: " + errorMessage);
     }
+
 }

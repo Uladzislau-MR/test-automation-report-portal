@@ -1,5 +1,6 @@
 package com.vladislav.testAutomationReportPortal.pages;
 
+import com.vladislav.testAutomationReportPortal.utils.ApiData;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -21,7 +22,7 @@ public class DashboardPage {
 
     public void openDashboard() {
         logger.info("Opening dashboard page");
-        driver.get("https://demo.reportportal.io/ui/#default_personal/dashboard/");
+        driver.get(ApiData.Endpoints.BASE_URL + ApiData.Project.PROJECT_NAME + ApiData.Endpoints.DASHBOARD);
         logger.debug("Navigated to: {}", driver.getCurrentUrl());
     }
 
