@@ -12,7 +12,7 @@ public class ApiData {
     public static class Auth {
         public static final String USERNAME = "default";
         public static final String PASSWORD = "1q2w3e";
-        public  static final String TOKEN = "Vlad_MF4_g9xvRPi7vBy4Sa6GBA2ymyqcgzmgbTItZQ_KlltBIYuAVqxcNaHDqADZRZqN";
+        public  static final String TOKEN = "qwe_hgy6TMpfSnaWevNld14DnIPncObMwPiXUPUQHG4CWzx62JMRKaqcTo7u6dpuAKWD";
     }
 
     public static class Project {

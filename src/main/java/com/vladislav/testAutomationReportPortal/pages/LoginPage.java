@@ -1,7 +1,5 @@
 package com.vladislav.testAutomationReportPortal.pages;
 
-
-
 import com.vladislav.testAutomationReportPortal.utils.ApiData;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
