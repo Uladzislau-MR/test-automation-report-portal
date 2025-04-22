@@ -1,15 +1,15 @@
-package api;
+package testAutomationReportPortal.api;
 
 
 import com.vladislav.testAutomationReportPortal.utils.ApiData;
-import helpers.RestAssuredHelper;
+import testAutomationReportPortal.helpers.RestAssuredHelper;
 import io.qameta.allure.*;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static helpers.RestAssuredHelper.RequestType.POST;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,7 +28,7 @@ public class DashboardApiTest {
         Response response = new RestAssuredHelper()
                 .withBasePath(ApiData.Project.DASHBOARD_PROJECT_NAME + ApiData.Endpoints.DASHBOARD)
                 .withBody(testDashboard)
-                .executeAndValidate(POST, 201);
+                .executeAndValidate(RestAssuredHelper.RequestType.POST, 201);
         Integer createdId = response.path("id");
         verifyDashboardWasCreated(createdId);
     }
@@ -67,7 +67,7 @@ private void verifyDashboardWasCreated(int dashboardId) {
         Response response = new RestAssuredHelper()
                 .withBasePath(ApiData.Project.DASHBOARD_PROJECT_NAME + ApiData.Endpoints.DASHBOARD)
                 .withBody(invalidDashboard)
-                .executeAndValidate(POST, 400);
+                .executeAndValidate(RestAssuredHelper.RequestType.POST, 400);
 
 
         validateErrorMessage(response);

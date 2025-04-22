@@ -1,7 +1,7 @@
-package helpers;
+package testAutomationReportPortal.helpers;
 
 
-import api.Dashboard;
+import testAutomationReportPortal.api.Dashboard;
 import com.vladislav.testAutomationReportPortal.utils.ApiData;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.http.ContentType;
@@ -15,7 +15,7 @@ import java.util.Map;
 import static io.restassured.RestAssured.*;
 
 public class RestAssuredHelper {
-    private RequestSpecification request;
+    final private RequestSpecification request;
     private String basePath;
     private final Map<String, Object> queryParams = new HashMap<>();
     private Object requestBody;

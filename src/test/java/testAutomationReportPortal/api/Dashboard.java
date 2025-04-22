@@ -1,4 +1,4 @@
-package api;
+package testAutomationReportPortal.api;
 
 public class Dashboard {
     private String name;
